@@ -1,7 +1,15 @@
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import Navbar from '@/components/nav/navbar';
 import SignInForm from '@/components/auth/signInForm';
 
-export default function page() {
+export default async function page() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (session?.user?.id) {
+    redirect('/dashboard');
+  }
   return (
     <>
       <Navbar />

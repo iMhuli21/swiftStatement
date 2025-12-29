@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang='en' className={roboto.variable}>
       <body className={`antialiased max-w-400 w-full mx-auto`}>
         {children}
-        <Toaster />
+        <Toaster richColors />
         <Footer />
       </body>
     </html>

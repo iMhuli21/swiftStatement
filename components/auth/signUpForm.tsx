@@ -7,18 +7,22 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/ui/field';
+import Link from 'next/link';
+import Image from 'next/image';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
 import { signUpSchema, SignUpType } from '@/lib/schemas';
-import Image from 'next/image';
-import Link from 'next/link';
+
+import { createUserFn } from '@/actions/createUser';
+import { useRouter } from 'next/navigation';
+import { Spinner } from '../ui/spinner';
 
 export default function SignUpForm() {
+  const route = useRouter();
   const form = useForm<SignUpType>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -29,11 +33,38 @@ export default function SignUpForm() {
     mode: 'onChange',
   });
 
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = form;
+
+  const onSubmit = async (values: SignUpType) => {
+    const res = await createUserFn(values);
+
+    if (res?.error) {
+      return toast.error('Error', {
+        description: res.error,
+      });
+    } else if (res?.success) {
+      toast.success('Success', {
+        description: res.success,
+      });
+
+      route.push('/dashboard');
+      route.refresh();
+    }
+  };
+
   return (
     <div className='flex flex-col gap-6'>
       <Card className='overflow-hidden p-0'>
         <CardContent className='grid p-0 md:grid-cols-2'>
-          <form id='sign_up_form' className='p-6 md:p-8'>
+          <form
+            id='sign_up_form'
+            className='p-6 md:p-8'
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <FieldGroup>
               <div className='flex flex-col items-center gap-1 text-center'>
                 <h1 className='text-2xl font-bold tracking-tight'>Welcome</h1>
@@ -44,7 +75,7 @@ export default function SignUpForm() {
               <FieldGroup>
                 <Controller
                   name='name'
-                  control={form.control}
+                  control={control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor='sign_up_form_name'>Name</FieldLabel>
@@ -62,7 +93,7 @@ export default function SignUpForm() {
                 />
                 <Controller
                   name='email'
-                  control={form.control}
+                  control={control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor='sign_up_form_email'>
@@ -83,7 +114,7 @@ export default function SignUpForm() {
                 />
                 <Controller
                   name='password'
-                  control={form.control}
+                  control={control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor='sign_up_form_password'>
@@ -104,7 +135,9 @@ export default function SignUpForm() {
                 />
               </FieldGroup>
               <Field>
-                <Button type='submit'>Sign Up</Button>
+                <Button type='submit' disabled={isSubmitting}>
+                  {isSubmitting && <Spinner />} Sign Up
+                </Button>
               </Field>
 
               <FieldDescription className='text-center'>
