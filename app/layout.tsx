@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
-import { Roboto_Flex } from 'next/font/google';
 import './globals.css';
-import Navbar from '@/components/nav/navbar';
+import type { Metadata } from 'next';
 import Footer from '@/components/footer';
+import { Roboto_Flex } from 'next/font/google';
+import { Toaster } from '@/components/ui/sonner';
 
 const roboto = Roboto_Flex({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -19,8 +19,8 @@ export default function RootLayout({
   return (
     <html lang='en' className={roboto.variable}>
       <body className={`antialiased max-w-400 w-full mx-auto`}>
-        <Navbar />
         {children}
+        <Toaster />
         <Footer />
       </body>
     </html>

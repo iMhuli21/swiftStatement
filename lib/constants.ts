@@ -17,6 +17,10 @@ export const routes: Route[] = [
     label: 'Customers',
   },
   {
+    href: '/dashboard',
+    label: 'Dashboard',
+  },
+  {
     href: '/invoices',
     label: 'Invoices',
   },
