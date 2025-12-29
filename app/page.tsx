@@ -1,65 +1,104 @@
-import Image from "next/image";
+import { Card, CardContent } from '@/components/ui/card';
+import Image from 'next/image';
+import Header from '@/components/header';
+import { Button } from '@/components/ui/button';
+import { steps, features } from '@/lib/constants';
+import Link from 'next/link';
 
-export default function Home() {
+export default function Page() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className='space-y-10 py-7'>
+      {/* HERO */}
+      <section className='min-h-[80dvh] flex flex-col-reverse items-start lg:flex-row lg:items-center gap-7 lg:justify-between px-4'>
+        <div className='flex flex-col items-start gap-2'>
+          <h1 className='font-extrabold text-3xl md:text-4xl lg:text-5xl tracking-tight'>
+            Make Invoices Swift
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className='max-w-138 w-full'>
+            Create, send and track invoices in just a few clicks. Save time, get
+            paid faster and keep your business running smoothly.
           </p>
+          <div className='flex items-center gap-4'>
+            <Button asChild>
+              <Link href='/sign-up'>Sign Up Free</Link>
+            </Button>
+            <Button variant='secondary' className='button_pulse'>
+              <Link href='/login'>Try It Now</Link>
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <Image
+          src='/working_on_laptop.png'
+          alt='an illustration of a person working on a laptop'
+          width={500}
+          height={500}
+          priority
+          className='object-cover size-100 lg:size-125'
+        />
+      </section>
+      {/* HOW IT WORKS */}
+      <section className='space-y-4 bg-gray-100 px-4 py-10'>
+        <Header
+          title='How It Works'
+          subtitle='Get started in three simple steps.'
+        />
+        <div className='w-full px-4 py-6'>
+          <div className='relative max-w-370 mx-auto'>
+            {/* Horizontal line (desktop only) */}
+            <div className='hidden sm:block absolute top-2 left-0 w-full h-px bg-gray-300' />
+
+            <div className='flex flex-col sm:flex-row sm:justify-between gap-10 sm:gap-0'>
+              {steps.map((step, index) => (
+                <div
+                  key={index}
+                  className='relative flex sm:flex-col items-start sm:items-center text-left sm:text-center sm:w-1/3'
+                >
+                  {/* Vertical line (mobile only) */}
+                  {index !== steps.length - 1 && (
+                    <div className='sm:hidden absolute left-2 top-5 w-px h-full bg-gray-300' />
+                  )}
+
+                  {/* Dot */}
+                  <div className='relative z-10 w-4 h-4 bg-primary rounded-full ring-1 ring-offset-4 ring-gray-300' />
+
+                  {/* Text */}
+                  <div className='ml-4 sm:ml-0 sm:mt-4 max-w-xs'>
+                    <span className='text-sm'>{step.title}</span>
+                    <h4 className='text-base font-medium capitalize'>
+                      {step.subtitle}
+                    </h4>
+                    <p className='mt-1 text-sm opacity-50'>
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+      {/* FEATURES */}
+      <section className='space-y-4 px-4'>
+        <Header title='Features' subtitle='Powerful features made simple.' />
+        <div className='flex items-center flex-wrap gap-6'>
+          {features.map((feature) => (
+            <Card
+              key={feature.title}
+              className='w-full max-w-sm hover:scale-105 hover:transition-transform hover:duration-150 hover:ease-in-out'
+            >
+              <CardContent className='flex flex-col items-center gap-2'>
+                <feature.icon />
+                <h4 className='font-medium text-base capitalize'>
+                  {feature.title}
+                </h4>
+                <p className='text-center text-sm opacity-50'>
+                  {feature.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
