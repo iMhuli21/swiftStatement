@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/header';
 import Navbar from '@/components/nav/navbar';
+import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { steps, features } from '@/lib/constants';
 import { Card, CardContent } from '@/components/ui/card';
@@ -103,6 +104,7 @@ export default function Page() {
           </div>
         </section>
       </main>
+      <Footer />
     </>
   );
 }

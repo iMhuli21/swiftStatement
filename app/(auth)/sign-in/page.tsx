@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Navbar from '@/components/nav/navbar';
 import SignInForm from '@/components/auth/signInForm';
+import Footer from '@/components/footer';
 
 export default async function page() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -18,6 +19,7 @@ export default async function page() {
           <SignInForm />
         </div>
       </main>
+      <Footer />
     </>
   );
 }

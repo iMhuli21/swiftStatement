@@ -21,6 +21,8 @@ export const user = pgTable('user', {
   companyAccountType: text('company_account_type'),
   companyBranchCode: integer('company_branch_code'),
   companyName: text('company_name'),
+  companyBank: text('company_bank'),
+  contactNumber: text('contact_number'),
   logoUrl: text('logo_url'),
   avatarUrl: text('avatar_url'),
   template: text('template').default('template1'),
@@ -272,3 +274,12 @@ export const accountRelations = relations(account, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+export type Status = (typeof statusEnum.enumValues)[number];
+
+export type InvoiceItem = typeof invoiceItem.$inferSelect;
+export type QuoteItem = typeof quoteItem.$inferSelect;
+export type Invoice = typeof invoice.$inferSelect;
+export type Quotation = typeof quote.$inferSelect;
+export type Customer = typeof customer.$inferSelect;
+export type User = typeof user.$inferSelect;

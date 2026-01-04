@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Navbar from '@/components/nav/navbar';
+import Footer from '@/components/footer';
 import SignUpForm from '@/components/auth/signUpForm';
 
 export default async function page() {
@@ -18,6 +19,7 @@ export default async function page() {
           <SignUpForm />
         </div>
       </main>
+      <Footer />
     </>
   );
 }
