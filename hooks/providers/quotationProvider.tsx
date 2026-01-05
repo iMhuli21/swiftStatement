@@ -1,66 +1,66 @@
 'use client';
 
-import { Customer, InvoiceItem } from '@/lib/db/schema';
+import { Customer, QuoteItem } from '@/lib/db/schema';
 import { Items } from '@/lib/constants';
 import { createContext, ReactNode, useMemo, useState } from 'react';
 
-type InvoiceContextType = {
+type QuoteContextType = {
   discount: string;
   discountAmount: number;
   tax: string;
   taxAmount: number;
-  invoiceItems: Items[];
+  quoteItems: Items[];
   subtotal: number;
   total: number;
-  invoiceNumber: string;
-  dueDate: Date | undefined;
-  invoicePrefix: string;
+  quoteNumber: string;
+  validDate: Date | undefined;
+  quotePrefix: string;
   customer: Customer | undefined;
   addCustomer: (obj: Customer) => void;
-  addInvoiceNumber: (invoiceNumber: string) => void;
-  addDueDate: (dueDate: Date | undefined) => void;
-  addInvoicePrefix: (invoicePrefix: string) => void;
-  addInvoiceItem: (obj: Items) => void;
+  addQuoteNumber: (quoteNumber: string) => void;
+  addValidDate: (validDate: Date | undefined) => void;
+  addQuotePrefix: (quotePrefix: string) => void;
+  addQuoteItem: (obj: Items) => void;
   addDiscount: (amount: string) => void;
   addTax: (amount: string) => void;
   resetItems: () => void;
   removeItem: (itemName: string) => void;
-  addInvoiceItems: (obj: InvoiceItem[]) => void;
+  addQuoteItems: (obj: QuoteItem[]) => void;
 };
 
-export const invoiceContext = createContext<InvoiceContextType | null>(null);
+export const quoteContext = createContext<QuoteContextType | null>(null);
 
-export default function InvoiceProvider({ children }: { children: ReactNode }) {
-  const [invoiceItems, setInvoiceItems] = useState<Items[]>([]);
+export default function QuoteProvider({ children }: { children: ReactNode }) {
+  const [quoteItems, setQuoteItems] = useState<Items[]>([]);
   const [discount, setDiscount] = useState<string>('');
   const [tax, setTax] = useState<string>('');
   const [customer, setCustomer] = useState<Customer>();
-  const [invoiceNumber, setInvoiceNumber] = useState<string>('');
-  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
-  const [invoicePrefix, setInvoicePrefix] = useState<string>('');
+  const [quoteNumber, setQuoteNumber] = useState<string>('');
+  const [validDate, setValidDate] = useState<Date | undefined>(undefined);
+  const [quotePrefix, setQuotePrefix] = useState<string>('');
 
   function addCustomer(customer: Customer) {
     setCustomer(customer);
   }
 
-  function addInvoiceNumber(invoiceNumber: string) {
-    setInvoiceNumber(invoiceNumber);
+  function addQuoteNumber(quoteNumber: string) {
+    setQuoteNumber(quoteNumber);
   }
 
-  function addDueDate(dueDate: Date | undefined) {
-    setDueDate(dueDate);
+  function addValidDate(validDate: Date | undefined) {
+    setValidDate(validDate);
   }
 
-  function addInvoicePrefix(invoicePrefix: string) {
-    setInvoicePrefix(invoicePrefix);
+  function addQuotePrefix(quotePrefix: string) {
+    setQuotePrefix(quotePrefix);
   }
 
-  function addInvoiceItem(item: Items) {
-    setInvoiceItems((prev) => [...prev, item]);
+  function addQuoteItem(item: Items) {
+    setQuoteItems((prev) => [...prev, item]);
   }
 
-  function addInvoiceItems(items: InvoiceItem[]) {
-    setInvoiceItems(
+  function addQuoteItems(items: QuoteItem[]) {
+    setQuoteItems(
       items.map((item) => ({
         itemDescription: item.itemDescription,
         qty: item.qty,
@@ -71,7 +71,7 @@ export default function InvoiceProvider({ children }: { children: ReactNode }) {
   }
 
   function removeItem(itemName: string) {
-    setInvoiceItems((prev) =>
+    setQuoteItems((prev) =>
       prev.filter((item) => item.itemDescription !== itemName)
     );
   }
@@ -85,18 +85,18 @@ export default function InvoiceProvider({ children }: { children: ReactNode }) {
   }
 
   function resetItems() {
-    setInvoiceItems([]);
+    setQuoteItems([]);
     setDiscount('');
     setTax('');
     setCustomer(undefined);
-    setDueDate(undefined);
-    setInvoicePrefix('');
-    setInvoiceNumber('');
+    setValidDate(undefined);
+    setQuotePrefix('');
+    setQuoteNumber('');
   }
 
   const subtotal = useMemo(() => {
-    return invoiceItems.reduce((sum, item) => sum + item.total, 0);
-  }, [invoiceItems]);
+    return quoteItems.reduce((sum, item) => sum + item.total, 0);
+  }, [quoteItems]);
 
   const discountAmount = useMemo(() => {
     const d = Number(discount);
@@ -115,32 +115,32 @@ export default function InvoiceProvider({ children }: { children: ReactNode }) {
   }, [subtotal, taxAmount, discountAmount]);
 
   return (
-    <invoiceContext.Provider
+    <quoteContext.Provider
       value={{
         customer,
         discount,
         discountAmount,
-        dueDate,
-        invoiceNumber,
-        invoicePrefix,
-        invoiceItems,
+        validDate,
+        quoteNumber,
+        quotePrefix,
+        quoteItems,
         subtotal,
         tax,
         taxAmount,
         total,
         addCustomer,
-        addDueDate,
-        addInvoiceNumber,
-        addInvoicePrefix,
+        addValidDate,
+        addQuoteNumber,
+        addQuotePrefix,
         addDiscount,
-        addInvoiceItem,
-        addInvoiceItems,
+        addQuoteItem,
+        addQuoteItems,
         addTax,
         resetItems,
         removeItem,
       }}
     >
       {children}
-    </invoiceContext.Provider>
+    </quoteContext.Provider>
   );
 }

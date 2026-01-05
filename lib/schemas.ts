@@ -35,6 +35,16 @@ export const invoiceSchema = z.object({
 
 export type InvoiceType = z.infer<typeof invoiceSchema>;
 
+export const quoteSchema = z.object({
+  vat: z.string('Tax amount is required.'),
+  clientName: z.string('Client name is required.'),
+  quotePrefix: z.string('Quote prefix is required.'),
+  discount: z.string('Discount amount is required.'),
+  quoteNumber: z.string('Quotation Number is required'),
+});
+
+export type QuotationType = z.infer<typeof quoteSchema>;
+
 export const editUserInfoSchema = z.object({
   name: z.string('Your name is required.').min(2),
   contactNumber: z.string('Contact number is required.').min(2),

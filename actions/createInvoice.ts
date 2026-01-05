@@ -3,15 +3,15 @@
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { db } from '@/lib/db/drizzle';
-import { InvoiceItems } from '@/lib/constants';
+import { Items } from '@/lib/constants';
+import { revalidatePath } from 'next/cache';
 import { invoice, invoiceItem } from '@/lib/db/schema';
 import { invoiceSchema, InvoiceType } from '@/lib/schemas';
-import { revalidatePath } from 'next/cache';
 
 export async function createInvoiceFn(
   values: InvoiceType,
   customerId: string,
-  invoiceItems: InvoiceItems[],
+  invoiceItems: Items[],
   total: number
 ) {
   try {

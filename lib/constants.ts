@@ -129,7 +129,7 @@ export const data = {
   ],
 };
 
-export type InvoiceItems = {
+export type Items = {
   itemDescription: string;
   qty: number;
   rate: number;
