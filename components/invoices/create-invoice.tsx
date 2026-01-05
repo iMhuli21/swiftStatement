@@ -75,10 +75,9 @@ type Props = {
       }
     | undefined
   >;
-  userId: string;
 };
 
-export default function CreateInvoice({ data, userId }: Props) {
+export default function CreateInvoice({ data }: Props) {
   const result = use(data);
 
   const route = useRouter();
@@ -177,7 +176,7 @@ export default function CreateInvoice({ data, userId }: Props) {
 
   return (
     <div className='space-y-4'>
-      <TemplateSwitch userId={userId} template={result?.template} />
+      <TemplateSwitch template={result?.template} />
       <div className='flex flex-col items-start gap-7'>
         <form
           id='create-invoice-form'

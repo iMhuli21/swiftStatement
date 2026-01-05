@@ -23,10 +23,8 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import { switchTemplateFn } from '@/actions/updateTemplate';
 
 export default function TemplateSwitch({
-  userId,
   template,
 }: {
-  userId: string;
   template: string | null | undefined;
 }) {
   const route = useRouter();

@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { statusEnum } from './db/schema';
 
 export const signUpSchema = z.object({
   email: z.email('Invalid email'),
@@ -57,3 +58,14 @@ export const editUserInfoSchema = z.object({
 });
 
 export type EditUserInfoType = z.infer<typeof editUserInfoSchema>;
+
+export const editQuoteSchema = z.object({
+  vat: z.string('Tax amount is required.'),
+  clientName: z.string('Client name is required.'),
+  quotePrefix: z.string('Quote prefix is required.'),
+  discount: z.string('Discount amount is required.'),
+  status: z.enum(statusEnum.enumValues),
+  quoteNumber: z.string('Quote number is required'),
+});
+
+export type EditQuoteType = z.infer<typeof editQuoteSchema>;

@@ -2,27 +2,33 @@ import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { getQuotation } from '@/lib/db/functions';
 import { Spinner } from '@/components/ui/spinner';
 import Headertitle from '@/components/header-title';
-import { getTemplateInfo } from '@/lib/db/functions';
-import CreateQuotation from '@/components/quotations/create-quotation';
+import EditQuotation from '@/components/quotations/edit-quotation';
 
-export default async function page() {
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function page({ params }: Props) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect('/sign-in');
   }
 
-  const data = getTemplateInfo(session.user.id);
+  const { id } = await params;
+
+  const data = getQuotation(id, session.user.id);
 
   return (
     <main className='px-6 space-y-6'>
       <div className='flex flex-col items-start gap-0'>
-        <Headertitle title='Create Quotation' />
-        <p className='text-xs opacity-50'>
-          Add another quotation to your system.
-        </p>
+        <Headertitle title='Edit Quotation' />
+        <p className='text-xs opacity-50'>Edit quotation.</p>
       </div>
       <Suspense
         fallback={
@@ -32,7 +38,7 @@ export default async function page() {
           </div>
         }
       >
-        <CreateQuotation data={data} />
+        <EditQuotation data={data} quoteId={id} />
       </Suspense>
     </main>
   );

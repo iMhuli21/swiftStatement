@@ -14,7 +14,7 @@ import { cn, currencyFormatter, toDate } from '@/lib/utils';
 import { Customer, InvoiceItem, Status } from '@/lib/db/schema';
 // import ExportTemplateOne from '@/components/exportTemplate1';
 // import ExportTemplateTwo from '@/components/exportTemplate2';
-// import DeleteInvoiceBtn from '@/components/deleteInvoiceBtn';
+import DeleteInvoiceBtn from '@/components/invoices/delete-invoice-btn';
 
 type Invoice = {
   id: string;
@@ -141,7 +141,7 @@ export const columns: ColumnDef<Invoice>[] = [
 
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild suppressHydrationWarning>
             <Button variant='ghost' className='h-8 w-8 p-0'>
               <span className='sr-only'>Open menu</span>
               <MoreHorizontal className='h-4 w-4' />
@@ -150,8 +150,7 @@ export const columns: ColumnDef<Invoice>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              {/* <DeleteInvoiceBtn id={data.id} /> */}
-              Delete Invoice
+              <DeleteInvoiceBtn id={data.id} />
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Link href={`/invoices/invoice/edit/${data.id}`}>

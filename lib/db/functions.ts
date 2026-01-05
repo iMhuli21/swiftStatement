@@ -203,3 +203,32 @@ export async function getQuotations(userId: string, tab: string | undefined) {
 
   return quotations;
 }
+
+export async function getQuotation(quoteId: string, userId: string) {
+  const quotation = await db.query.quote.findFirst({
+    where: (quote, { eq, and }) =>
+      and(eq(quote.id, quoteId), eq(quote.authorId, userId)),
+    with: {
+      author: {
+        columns: {
+          companyAccountNumber: true,
+          companyAccountType: true,
+          companyName: true,
+          companyBranchCode: true,
+          logoUrl: true,
+          email: true,
+          template: true,
+          companyBank: true,
+          contactNumber: true,
+        },
+        with: {
+          customers: true,
+        },
+      },
+      billing: true,
+      items: true,
+    },
+  });
+
+  return quotation;
+}

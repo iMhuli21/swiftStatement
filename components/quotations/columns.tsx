@@ -12,9 +12,9 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { cn, currencyFormatter, toDate } from '@/lib/utils';
 import { Customer, QuoteItem, Status } from '@/lib/db/schema';
+import DeleteQuoteBtn from '@/components/quotations/delete-quote-btn';
 // import ExportTemplateOne from '@/components/exportTemplate1';
 // import ExportTemplateTwo from '@/components/exportTemplate2';
-// import DeleteInvoiceBtn from '@/components/deleteInvoiceBtn';
 
 type Quote = {
   id: string;
@@ -141,7 +141,7 @@ export const columns: ColumnDef<Quote>[] = [
 
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild suppressHydrationWarning>
             <Button variant='ghost' className='h-8 w-8 p-0'>
               <span className='sr-only'>Open menu</span>
               <MoreHorizontal className='h-4 w-4' />
@@ -150,11 +150,12 @@ export const columns: ColumnDef<Quote>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              {/* <DeleteInvoiceBtn id={data.id} /> */}
-              Delete Quote
+              <DeleteQuoteBtn id={data.id} />
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href={`/invoices/invoice/edit/${data.id}`}>Edit Quote</Link>
+              <Link href={`/dashboard/quotations/edit/${data.id}`}>
+                Edit Quote
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className='flex items-center'>
               {/* {data.author.template === 'template1' ? (

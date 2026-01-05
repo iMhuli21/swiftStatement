@@ -34,13 +34,13 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { use, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { currencyFormatter } from '@/lib/utils';
 import { useQuote } from '@/hooks/use-quotation';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { createQuoteFn } from '@/actions/createQuotation';
 import TemplateSwitch from '@/components/template-switch';
 import { quoteSchema, QuotationType } from '@/lib/schemas';
-import { currencyFormatter } from '@/lib/utils';
-import { createQuoteFn } from '@/actions/createQuotation';
 import { EllipsisVertical, Loader2, Trash2 } from 'lucide-react';
 import PreviewQuotationTemplateOne from '@/components/quotations/preview-template-one';
 import PreviewQuotationTemplateTwo from '@/components/quotations/preview-template-two';
@@ -69,10 +69,9 @@ type Props = {
       }
     | undefined
   >;
-  userId: string;
 };
 
-export default function CreateQuotation({ data, userId }: Props) {
+export default function CreateQuotation({ data }: Props) {
   const result = use(data);
 
   const route = useRouter();
@@ -168,7 +167,7 @@ export default function CreateQuotation({ data, userId }: Props) {
 
   return (
     <div className='space-y-4'>
-      <TemplateSwitch userId={userId} template={result?.template} />
+      <TemplateSwitch template={result?.template} />
       <div className='flex flex-col items-start gap-7'>
         <form
           id='create-quotation-form'
