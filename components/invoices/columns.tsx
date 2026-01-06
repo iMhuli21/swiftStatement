@@ -153,7 +153,7 @@ export const columns: ColumnDef<Invoice>[] = [
               <DeleteInvoiceBtn id={data.id} />
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href={`/invoices/invoice/edit/${data.id}`}>
+              <Link href={`/dashboard/invoices/edit/${data.id}`}>
                 Edit Invoice
               </Link>
             </DropdownMenuItem>

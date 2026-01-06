@@ -1,10 +1,14 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { getClients } from '@/lib/db/functions';
 import ItemStatus from '@/components/item-status';
+import { Spinner } from '@/components/ui/spinner';
 import Headertitle from '@/components/header-title';
+import ManageClients from '@/components/clients/manage-clients';
 
 type Props = {
   searchParams: Promise<{
@@ -21,6 +25,8 @@ export default async function page({ searchParams }: Props) {
 
   const { tab } = await searchParams;
 
+  const data = getClients(session.user.id, tab);
+
   return (
     <main className='px-6 space-y-6'>
       <div className='space-y-3'>
@@ -28,13 +34,22 @@ export default async function page({ searchParams }: Props) {
           <Headertitle title='Clients' />
           <p className='text-xs opacity-50'>All the clients you have added.</p>
         </div>
-        <div className='flex items-center gap-4 justify-between'>
-          <ItemStatus href='/dashboard/clients' />
+        <div className='flex items-center gap-4 justify-end'>
           <Button asChild>
             <Link href='/dashboard/clients/create'>+ Add Client</Link>
           </Button>
         </div>
       </div>
+      <Suspense
+        fallback={
+          <div className='flex items-center justify-center gap-4'>
+            <Spinner />
+            Loading clients...
+          </div>
+        }
+      >
+        <ManageClients data={data} />
+      </Suspense>
     </main>
   );
 }

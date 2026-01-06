@@ -8,7 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Select,
   SelectTrigger,
@@ -33,31 +37,33 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { currencyFormatter } from '@/lib/utils';
-import { useQuote } from '@/hooks/use-quotation';
+import { cn, currencyFormatter, toDate } from '@/lib/utils';
+import { useInvoice } from '@/hooks/use-invoice';
+import { Calendar } from '@/components/ui/calendar';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { use, useMemo, useState, useEffect } from 'react';
 import TemplateSwitch from '@/components/template-switch';
-import { updateQuoteFn } from '@/actions/updateQuotation';
-import { Customer, QuoteItem, Status, statusEnum } from '@/lib/db/schema';
-import { editQuoteSchema, EditQuoteType } from '@/lib/schemas';
-import { EllipsisVertical, Loader2, Trash2 } from 'lucide-react';
-import PreviewQuotationTemplateOne from '@/components/quotations/preview-template-one';
-import PreviewQuotationTemplateTwo from '@/components/quotations/preview-template-two';
+import { updateInvoiceFn } from '@/actions/updateInvoice';
+import { CalendarIcon, EllipsisVertical, Loader2, Trash2 } from 'lucide-react';
+import { editInvoiceSchema, EditInvoiceType } from '@/lib/schemas';
+import { Customer, InvoiceItem, Status, statusEnum } from '@/lib/db/schema';
+import PreviewInvoiceTemplateOne from '@/components/invoices/preview-template-one';
+import PreviewInvoiceTemplateTwo from '@/components/invoices/preview-template-two';
+import { format } from 'date-fns';
 
 type Props = {
   data: Promise<
     | {
         id: string;
         createdAt: Date;
-        validDate: string;
+        dueDate: string;
         total: number;
         status: Status | null;
-        vat: string;
+        vat: number;
         discount: number;
-        quotePrefix: string;
-        quoteNumber: number | null;
+        invoicePrefix: string;
+        invoiceNumber: number | null;
         author: {
           email: string;
           companyAccountNumber: number | null;
@@ -71,85 +77,86 @@ type Props = {
           template: string | null;
         };
         billing: Customer;
-        items: QuoteItem[];
+        items: InvoiceItem[];
       }
     | undefined
   >;
-  quoteId: string;
+  invoiceId: string;
 };
 
-export default function EditQuotation({ data, quoteId }: Props) {
+export default function EditInvoice({ data, invoiceId }: Props) {
   const result = use(data);
 
   const route = useRouter();
 
   const {
     addCustomer,
-    addQuoteNumber,
-    addQuotePrefix,
-    addQuoteItem,
+    addInvoiceNumber,
+    addInvoicePrefix,
+    addInvoiceItem,
     addTax,
     addDiscount,
-    addQuoteItems,
-    quoteItems,
+    addInvoiceItems,
+    addDueDate,
+    invoiceItems,
     removeItem,
     resetItems,
     customer,
     total,
-  } = useQuote();
+  } = useInvoice();
 
-  const [quoteQty, setQuoteQty] = useState(0);
-  const [quoteRate, setQuoteRate] = useState(0);
-  const [quoteItem, setQuoteItem] = useState('');
+  const [invoiceQty, setInvoiceQty] = useState(0);
+  const [invoiceRate, setInvoiceRate] = useState(0);
+  const [invoiceItem, setInvoiceItem] = useState('');
 
-  const form = useForm<EditQuoteType>({
-    resolver: zodResolver(editQuoteSchema),
+  const form = useForm<EditInvoiceType>({
+    resolver: zodResolver(editInvoiceSchema),
     mode: 'onChange',
     defaultValues: {
       clientName: result?.billing.customerName || '',
       discount: result?.discount.toString() || '',
-      quoteNumber: result?.quoteNumber?.toString() || '',
-      quotePrefix: result?.quotePrefix || '',
-      vat: result?.vat || '',
+      invoiceNumber: result?.invoiceNumber?.toString() || '',
+      invoicePrefix: result?.invoicePrefix || '',
+      vat: result?.vat.toString() || '',
       status: result?.status || statusEnum.enumValues[0],
+      dueDate: result?.dueDate ? new Date(result.dueDate) : undefined,
     },
   });
 
   const {
     control,
     handleSubmit,
-    reset,
     formState: { isSubmitting },
   } = form;
 
-  const quoteTotal = useMemo(() => {
-    if (quoteQty === 0 && quoteRate === 0) return 0;
-    return quoteQty * quoteRate;
-  }, [quoteQty, quoteRate]);
+  const invoiceTotal = useMemo(() => {
+    if (invoiceQty === 0 && invoiceRate === 0) return 0;
+    return invoiceQty * invoiceRate;
+  }, [invoiceQty, invoiceRate]);
 
   const handleAddItem = () => {
-    if (quoteQty !== 0 && quoteRate !== 0 && quoteItem.length !== 0) {
-      addQuoteItem({
-        itemDescription: quoteItem,
-        qty: quoteQty,
-        rate: quoteRate,
-        total: quoteTotal,
+    if (invoiceQty !== 0 && invoiceRate !== 0 && invoiceItem.length !== 0) {
+      addInvoiceItem({
+        itemDescription: invoiceItem,
+        qty: invoiceQty,
+        rate: invoiceRate,
+        total: invoiceTotal,
       });
 
-      setQuoteItem('');
-      setQuoteQty(0);
-      setQuoteRate(0);
+      setInvoiceItem('');
+      setInvoiceQty(0);
+      setInvoiceRate(0);
     }
   };
 
-  const onSubmit = async (values: EditQuoteType) => {
+  const onSubmit = async (values: EditInvoiceType) => {
     if (customer) {
-      const result = await updateQuoteFn(
+      const result = await updateInvoiceFn(
         values,
         customer.id,
-        quoteItems,
+        invoiceItems,
         total,
-        quoteId
+        invoiceId
       );
 
       if (result?.error) {
@@ -171,11 +178,12 @@ export default function EditQuotation({ data, quoteId }: Props) {
   useEffect(() => {
     if (result) {
       addCustomer(result.billing);
-      addQuotePrefix(result.quotePrefix);
-      addQuoteNumber(result.quoteNumber?.toString() || '');
+      addInvoicePrefix(result.invoicePrefix);
+      addInvoiceNumber(result.invoiceNumber?.toString() || '');
       addDiscount(result.discount.toString());
       addTax(result.vat.toString());
-      addQuoteItems(result.items);
+      addInvoiceItems(result.items);
+      addDueDate(result.dueDate ? new Date(result.dueDate) : undefined);
     }
   }, [result]);
 
@@ -185,7 +193,7 @@ export default function EditQuotation({ data, quoteId }: Props) {
         <TemplateSwitch template={result?.author.template} />
         <div className='flex flex-col items-start gap-7'>
           <form
-            id='edit-quotation-form'
+            id='edit-invoice-form'
             onSubmit={handleSubmit(onSubmit)}
             className='w-full max-w-200'
           >
@@ -195,11 +203,11 @@ export default function EditQuotation({ data, quoteId }: Props) {
                 control={control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor='edit-quotation-form-name'>
+                    <FieldLabel htmlFor='edit-invoice-form-name'>
                       Bill To
                     </FieldLabel>
                     <FieldDescription>
-                      Select the client who will receive and pay this quotation.
+                      Select the client who will receive and pay this invoice.
                     </FieldDescription>
                     <Select
                       defaultValue={field.value}
@@ -235,22 +243,68 @@ export default function EditQuotation({ data, quoteId }: Props) {
                   </Field>
                 )}
               />
-
               <Controller
-                name='quotePrefix'
+                name='dueDate'
                 control={control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Quotation Prefix</FieldLabel>
+                    <FieldLabel>Due Date</FieldLabel>
                     <FieldDescription>
-                      A short label added before the quote number to help
-                      organize quotations (for example, QUO-)
+                      The date by which payment is expected.
+                    </FieldDescription>
+                    <Popover>
+                      <PopoverTrigger asChild suppressHydrationWarning>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'w-full flex items-center justify-start gap-2 border-input',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          <CalendarIcon className='h-4 w-4 opacity-50' />
+                          {field.value ? (
+                            format(toDate(field.value), 'PPP')
+                          ) : (
+                            <span className='text-start'>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0' align='start'>
+                        <Calendar
+                          mode='single'
+                          selected={field.value}
+                          onSelect={(selected) => {
+                            if (typeof selected !== undefined) {
+                              addDueDate(selected);
+                            }
+                            field.onChange(selected);
+                          }}
+                          disabled={(date) => date < new Date()}
+                        />
+                      </PopoverContent>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Popover>
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name='invoicePrefix'
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Invoice Prefix</FieldLabel>
+                    <FieldDescription>
+                      A short label added before the invoice number to help
+                      organize invoices (for example, INV-)
                     </FieldDescription>
                     <Input
                       {...field}
                       className='uppercase'
                       onChange={(e) => {
-                        addQuotePrefix(e.target.value);
+                        addInvoicePrefix(e.target.value);
                         field.onChange(e);
                       }}
                       placeholder='ACME'
@@ -262,20 +316,20 @@ export default function EditQuotation({ data, quoteId }: Props) {
                 )}
               />
               <Controller
-                name='quoteNumber'
+                name='invoiceNumber'
                 control={control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Quotation Number</FieldLabel>
+                    <FieldLabel>Invoice Number</FieldLabel>
                     <FieldDescription>
                       A unique reference used to identify and track this
-                      quotation.
+                      invoice.
                     </FieldDescription>
                     <Input
                       type='number'
                       {...field}
                       onChange={(e) => {
-                        addQuoteNumber(e.target.value);
+                        addInvoiceNumber(e.target.value);
                         field.onChange(e);
                       }}
                       placeholder='21'
@@ -318,7 +372,7 @@ export default function EditQuotation({ data, quoteId }: Props) {
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Tax (%)</FieldLabel>
                     <FieldDescription>
-                      Applicable tax added to the quotation based on your rates.
+                      Applicable tax added to the invoice based on your rates.
                     </FieldDescription>
                     <Input
                       {...field}
@@ -343,7 +397,7 @@ export default function EditQuotation({ data, quoteId }: Props) {
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Status</FieldLabel>
                     <FieldDescription>
-                      The status of your quotation.
+                      The status of your invoice.
                     </FieldDescription>
                     <Select
                       defaultValue={field.value}
@@ -388,8 +442,8 @@ export default function EditQuotation({ data, quoteId }: Props) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {quoteItems.length > 0 &&
-                      quoteItems.map((item) => (
+                    {invoiceItems.length > 0 &&
+                      invoiceItems.map((item) => (
                         <TableRow key={`${item.itemDescription}-${item.rate}`}>
                           <TableCell className='h-9 px-2.5 py-1'>
                             {item.itemDescription}
@@ -424,8 +478,8 @@ export default function EditQuotation({ data, quoteId }: Props) {
                     <TableRow>
                       <TableCell className='p-0'>
                         <Input
-                          value={quoteItem}
-                          onChange={(e) => setQuoteItem(e.target.value)}
+                          value={invoiceItem}
+                          onChange={(e) => setInvoiceItem(e.target.value)}
                           placeholder='Web Design'
                           className='border-none shadow-none focus-visible:ring-0'
                         />
@@ -433,8 +487,10 @@ export default function EditQuotation({ data, quoteId }: Props) {
                       <TableCell className='p-0'>
                         <Input
                           type='number'
-                          value={quoteQty}
-                          onChange={(e) => setQuoteQty(Number(e.target.value))}
+                          value={invoiceQty}
+                          onChange={(e) =>
+                            setInvoiceQty(Number(e.target.value))
+                          }
                           placeholder='1'
                           className='border-none shadow-none p-2 focus-visible:ring-0'
                         />
@@ -442,14 +498,16 @@ export default function EditQuotation({ data, quoteId }: Props) {
                       <TableCell className='p-0'>
                         <Input
                           type='number'
-                          value={quoteRate}
-                          onChange={(e) => setQuoteRate(Number(e.target.value))}
+                          value={invoiceRate}
+                          onChange={(e) =>
+                            setInvoiceRate(Number(e.target.value))
+                          }
                           placeholder='1'
                           className='border-none shadow-none p-2 focus-visible:ring-0'
                         />
                       </TableCell>
                       <TableCell className='h-9 px-2.5 py-1'>
-                        {currencyFormatter(quoteTotal.toString())}
+                        {currencyFormatter(invoiceTotal.toString())}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -489,8 +547,8 @@ export default function EditQuotation({ data, quoteId }: Props) {
           <div className='bg-neutral-100 border border-neutral-200 rounded-xl p-7 shadow-xs space-y-5 h-full w-200 overflow-x-auto relative'>
             <h3 className='font-semibold text-xl tracking-tight'>Preview</h3>
             {result?.author.template === 'template1' ? (
-              <PreviewQuotationTemplateOne
-                quoteDetails={{
+              <PreviewInvoiceTemplateOne
+                invoiceDetails={{
                   user: {
                     companyName: result?.author.companyName,
                     contactNumber: result?.author.contactNumber,
@@ -503,8 +561,8 @@ export default function EditQuotation({ data, quoteId }: Props) {
                 }}
               />
             ) : (
-              <PreviewQuotationTemplateTwo
-                quoteDetails={{
+              <PreviewInvoiceTemplateTwo
+                invoiceDetails={{
                   user: {
                     companyName: result?.author.companyName,
                     contactNumber: result?.author.contactNumber,

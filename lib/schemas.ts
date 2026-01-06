@@ -69,3 +69,15 @@ export const editQuoteSchema = z.object({
 });
 
 export type EditQuoteType = z.infer<typeof editQuoteSchema>;
+
+export const editInvoiceSchema = z.object({
+  vat: z.string('Tax amount is required.'),
+  clientName: z.string('Client name is required.'),
+  invoicePrefix: z.string('Invoice prefix is required.'),
+  discount: z.string('Discount amount is required.'),
+  status: z.enum(statusEnum.enumValues),
+  dueDate: z.date('Due date is required.'),
+  invoiceNumber: z.string('Invoice number is required'),
+});
+
+export type EditInvoiceType = z.infer<typeof editInvoiceSchema>;

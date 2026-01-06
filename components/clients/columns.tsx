@@ -18,13 +18,13 @@ export type CustomerData = {
   invoices: {
     id: string;
     total: number;
-    status: Status;
+    status: Status | null;
   }[];
 } & {
   quotations: {
     id: string;
     total: number;
-    status: Status;
+    status: Status | null;
   }[];
 } & {
   id: string;
@@ -224,11 +224,17 @@ export function useColumns() {
           <p
             className={cn(
               isDue.length > 0
-                ? 'capitalize w-fit text-sm font-medium text-destructive/60 '
-                : 'capitalize w-fit text-sm font-medium text-emerald-600'
+                ? 'capitalize w-fit text-sm text-destructive/60 '
+                : data.invoices.length > 0 && isDue.length === 0
+                ? 'capitalize w-fit text-sm text-emerald-600'
+                : 'capitalize w-fit text-sm'
             )}
           >
-            {data.invoices.length > 0 && isDue.length > 0 ? 'Due' : 'Paid'}
+            {data.invoices.length > 0 && isDue.length > 0
+              ? 'Due'
+              : data.invoices.length > 0 && isDue.length === 0
+              ? 'Paid'
+              : '-'}
           </p>
         );
       },
@@ -249,12 +255,12 @@ export function useColumns() {
             <DropdownMenuContent align='end'>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem>
-                <Link href={`/dashboard/clients/client/edit/${data.id}`}>
+                <Link href={`/dashboard/clients/edit/${data.id}`}>
                   Edit Client
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link href={`/dashboard/clients/client/documents/${data.id}`}>
+                <Link href={`/dashboard/clients/documents/${data.id}`}>
                   View Documents
                 </Link>
               </DropdownMenuItem>
