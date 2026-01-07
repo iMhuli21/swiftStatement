@@ -1,7 +1,5 @@
 'use server';
 
-export const runtime = 'nodejs';
-
 import { auth } from '@/lib/auth';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
