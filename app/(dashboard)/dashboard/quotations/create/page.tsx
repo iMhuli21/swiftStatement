@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';

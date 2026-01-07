@@ -1,10 +1,12 @@
 'use server';
 
+export const runtime = 'nodejs';
+
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/drizzle';
 import { customer } from '@/lib/db/schema';
 import { customerSchema, CustomerType } from '@/lib/schemas';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 export async function createClientFn(values: CustomerType) {
@@ -33,7 +35,7 @@ export async function createClientFn(values: CustomerType) {
         throw new Error('Something went wrong');
       }
 
-      revalidateTag('client_data', 'max');
+      revalidatePath('/dashboard/clients');
 
       return {
         success: 'Successfully added client to system.',

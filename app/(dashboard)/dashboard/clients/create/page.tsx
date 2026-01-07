@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 import { auth } from '@/lib/auth';
 import Headertitle from '@/components/header-title';
 import { headers } from 'next/headers';

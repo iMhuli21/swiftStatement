@@ -1,5 +1,6 @@
 'use server';
 
+export const runtime = 'nodejs';
 import { auth } from '@/lib/auth';
 import { SignInType, signInSchema } from '@/lib/schemas';
 

@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 
 const f = createUploadthing();

@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
