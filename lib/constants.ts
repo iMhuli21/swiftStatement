@@ -121,11 +121,6 @@ export const data = {
       url: '/dashboard/settings',
       icon: Settings,
     },
-    {
-      title: 'Search',
-      url: '/dashboard/search',
-      icon: Search,
-    },
   ],
 };
 

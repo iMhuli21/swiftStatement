@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { type Icon } from '@tabler/icons-react';
 
 import {
   SidebarGroup,
@@ -18,7 +17,8 @@ export function NavSecondary({
   items: {
     title: string;
     url: string;
-    icon: Icon;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    icon: any;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (

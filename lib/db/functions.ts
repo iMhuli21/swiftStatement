@@ -454,3 +454,32 @@ export async function getCustomerDocuments(
 
   return { invoices, customer, quotations, invoiceNumPages, quotationNumPages };
 }
+
+export async function getDashboardInfo(userId: string) {
+  const invoicesPromise = db
+    .select({ total: invoice.total })
+    .from(invoice)
+    .where(and(eq(invoice.authorId, userId), eq(invoice.status, 'paid')));
+
+  const quotationsPromise = db
+    .select({ total: quote.total })
+    .from(quote)
+    .where(and(eq(quote.authorId, userId), eq(quote.status, 'paid')));
+
+  const clientsPromise = db
+    .select({ count: count() })
+    .from(customer)
+    .where(eq(customer.sellerId, userId));
+
+  const [invoices, quotations, clients] = await Promise.all([
+    invoicesPromise,
+    quotationsPromise,
+    clientsPromise,
+  ]);
+
+  return {
+    invoices,
+    quotations,
+    clients: clients[0].count,
+  };
+}

@@ -32,7 +32,7 @@ export default async function page() {
           </div>
         }
       >
-        <CreateInvoice data={data} userId={session.user.id} />
+        <CreateInvoice data={data} />
       </Suspense>
     </main>
   );

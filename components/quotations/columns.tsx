@@ -13,8 +13,8 @@ import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { cn, currencyFormatter, toDate } from '@/lib/utils';
 import { Customer, QuoteItem, Status } from '@/lib/db/schema';
 import DeleteQuoteBtn from '@/components/quotations/delete-quote-btn';
-// import ExportTemplateOne from '@/components/exportTemplate1';
-// import ExportTemplateTwo from '@/components/exportTemplate2';
+import ExportTemplateOne from '@/components/quotations/export-template-1';
+import ExportTemplateTwo from '@/components/quotations/export-template-2';
 
 type Quote = {
   id: string;
@@ -158,12 +158,11 @@ export const columns: ColumnDef<Quote>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className='flex items-center'>
-              {/* {data.author.template === 'template1' ? (
-                <ExportTemplateOne invoiceDetails={data} />
+              {data.author.template === 'template1' ? (
+                <ExportTemplateOne quoteDetails={data} />
               ) : (
-                <ExportTemplateTwo invoiceDetails={data} />
-              )} */}
-              Export Quote
+                <ExportTemplateTwo quoteDetails={data} />
+              )}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -12,8 +12,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { cn, currencyFormatter, toDate } from '@/lib/utils';
 import { Customer, InvoiceItem, Status } from '@/lib/db/schema';
-// import ExportTemplateOne from '@/components/exportTemplate1';
-// import ExportTemplateTwo from '@/components/exportTemplate2';
+import ExportTemplateOne from '@/components/invoices/export-template-1';
+import ExportTemplateTwo from '@/components/invoices/export-template-2';
 import DeleteInvoiceBtn from '@/components/invoices/delete-invoice-btn';
 
 type Invoice = {
@@ -158,12 +158,11 @@ export const columns: ColumnDef<Invoice>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className='flex items-center'>
-              {/* {data.author.template === 'template1' ? (
+              {data.author.template === 'template1' ? (
                 <ExportTemplateOne invoiceDetails={data} />
               ) : (
                 <ExportTemplateTwo invoiceDetails={data} />
-              )} */}
-              Export Invoice
+              )}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
