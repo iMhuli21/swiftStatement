@@ -66,7 +66,7 @@ type Props = {
         invoiceNumber: number | null;
         author: {
           email: string;
-          companyAccountNumber: number | null;
+          companyAccountNumber: string | null;
           companyAccountType: string | null;
           companyBank: string | null;
           companyBranchCode: number | null;

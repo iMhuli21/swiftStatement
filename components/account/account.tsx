@@ -24,7 +24,7 @@ type Props = {
         name: string;
         email: string;
         image: string | null;
-        companyAccountNumber: number | null;
+        companyAccountNumber: string | null;
         companyAccountType: string | null;
         companyBranchCode: number | null;
         companyName: string | null;

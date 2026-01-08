@@ -10,7 +10,7 @@ type Props = {
     user: {
       contactNumber: string | null | undefined;
       email: string | null | undefined;
-      companyAccountNumber: number | null | undefined;
+      companyAccountNumber: string | null | undefined;
       companyAccountType: string | null | undefined;
       companyBank: string | null | undefined;
       companyBranchCode: number | null | undefined;

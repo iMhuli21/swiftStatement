@@ -37,7 +37,7 @@ export async function updateUserFn(
         const query = await db
           .update(user)
           .set({
-            companyAccountNumber: Number(companyAccNo),
+            companyAccountNumber: companyAccNo,
             companyAccountType: companyAccType,
             companyBank,
             companyBranchCode: Number(companyBranchCode),
@@ -60,7 +60,7 @@ export async function updateUserFn(
       const query = await db
         .update(user)
         .set({
-          companyAccountNumber: Number(companyAccNo),
+          companyAccountNumber: companyAccNo,
           companyAccountType: companyAccType,
           companyBank,
           companyBranchCode: Number(companyBranchCode),

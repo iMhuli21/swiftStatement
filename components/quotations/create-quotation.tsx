@@ -49,7 +49,7 @@ type Props = {
   data: Promise<
     | {
         email: string;
-        companyAccountNumber: number | null;
+        companyAccountNumber: string | null;
         companyAccountType: string | null;
         companyBranchCode: number | null;
         companyName: string | null;

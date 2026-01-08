@@ -17,7 +17,7 @@ export const user = pgTable('user', {
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').default(false).notNull(),
   image: text('image'),
-  companyAccountNumber: integer('company_account_number'),
+  companyAccountNumber: text('company_account_number'),
   companyAccountType: text('company_account_type'),
   companyBranchCode: integer('company_branch_code'),
   companyName: text('company_name'),

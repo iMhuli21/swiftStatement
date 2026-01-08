@@ -33,7 +33,7 @@ type Props = {
         name: string;
         email: string;
         image: string | null;
-        companyAccountNumber: number | null;
+        companyAccountNumber: string | null;
         companyAccountType: string | null;
         companyBranchCode: number | null;
         companyName: string | null;
@@ -64,7 +64,7 @@ export default function Settings({ data }: Props) {
     mode: 'onChange',
     defaultValues: {
       companyAccNo: result?.companyAccountNumber
-        ? result.companyAccountNumber.toString()
+        ? result.companyAccountNumber
         : '',
       companyAccType: result?.companyAccountType
         ? result.companyAccountType
