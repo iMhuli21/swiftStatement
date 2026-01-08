@@ -17,10 +17,18 @@ export default function Footer() {
         <CurrentTime />
       </Suspense>
       <div className='flex items-center gap-4'>
-        <a href='http://' target='_blank' rel='noopener noreferrer'>
+        <a
+          href='https://github.com/iMhuli21'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           <FaGithub className='flex-none size-5' />
         </a>
-        <a href='http://' target='_blank' rel='noopener noreferrer'>
+        <a
+          href='https://www.linkedin.com/in/hulisani-sadiki-1438b5270/'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           <FaLinkedinIn className='flex-none size-5' />
         </a>
       </div>

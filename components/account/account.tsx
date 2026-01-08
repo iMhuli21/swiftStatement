@@ -35,6 +35,12 @@ type Props = {
         template: string | null;
         createdAt: Date;
         updatedAt: Date;
+        invoices: {
+          id: string;
+        }[];
+        quotes: {
+          id: string;
+        }[];
       }
     | undefined
   >;
@@ -89,11 +95,11 @@ export default function Account({ data }: Props) {
               </div>
               <div className='flex items-center gap-1 text-sm'>
                 <span className='text-sm'>Invoices:</span>
-                <p className='text-sm font-medium'>{'10'}</p>
+                <p className='text-sm font-medium'>{result.invoices.length}</p>
               </div>
               <div className='flex items-center gap-1 text-sm'>
                 <span className='text-sm'>Quotations:</span>
-                <p className='text-sm font-medium'>{'20'}</p>
+                <p className='text-sm font-medium'>{result.quotes.length}</p>
               </div>
               <div className='flex items-center gap-1 text-sm'>
                 <span className='text-sm'>Template:</span>

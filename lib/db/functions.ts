@@ -32,6 +32,18 @@ export async function getUserAccountInfo(userId: string) {
     columns: {
       emailVerified: false,
     },
+    with: {
+      invoices: {
+        columns: {
+          id: true,
+        },
+      },
+      quotes: {
+        columns: {
+          id: true,
+        },
+      },
+    },
   });
 
   return result;

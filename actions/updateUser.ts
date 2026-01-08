@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/drizzle';
 import { user } from '@/lib/db/schema';
 import { editUserInfoSchema, EditUserInfoType } from '@/lib/schemas';
+import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
@@ -33,17 +34,20 @@ export async function updateUserFn(
       } = data.data;
 
       if (logoUrl) {
-        const query = await db.update(user).set({
-          companyAccountNumber: Number(companyAccNo),
-          companyAccountType: companyAccType,
-          companyBank,
-          companyBranchCode: Number(companyBranchCode),
-          companyName,
-          contactNumber,
-          email: emailAddress,
-          name,
-          logoUrl,
-        });
+        const query = await db
+          .update(user)
+          .set({
+            companyAccountNumber: Number(companyAccNo),
+            companyAccountType: companyAccType,
+            companyBank,
+            companyBranchCode: Number(companyBranchCode),
+            companyName,
+            contactNumber,
+            email: emailAddress,
+            name,
+            logoUrl,
+          })
+          .where(eq(user.id, session.user.id));
 
         if (!query) throw new Error('Something went wrong.');
 
@@ -53,16 +57,19 @@ export async function updateUserFn(
           success: 'Successfully update user info.',
         };
       }
-      const query = await db.update(user).set({
-        companyAccountNumber: Number(companyAccNo),
-        companyAccountType: companyAccType,
-        companyBank,
-        companyBranchCode: Number(companyBranchCode),
-        companyName,
-        contactNumber,
-        email: emailAddress,
-        name,
-      });
+      const query = await db
+        .update(user)
+        .set({
+          companyAccountNumber: Number(companyAccNo),
+          companyAccountType: companyAccType,
+          companyBank,
+          companyBranchCode: Number(companyBranchCode),
+          companyName,
+          contactNumber,
+          email: emailAddress,
+          name,
+        })
+        .where(eq(user.id, session.user.id));
 
       if (!query) throw new Error('Something went wrong.');
 
