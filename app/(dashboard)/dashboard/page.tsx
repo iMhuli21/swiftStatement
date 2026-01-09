@@ -7,12 +7,24 @@ import { redirect } from 'next/navigation';
 import Headertitle from '@/components/header-title';
 import { getDashboardInfo } from '@/lib/db/functions';
 import { SectionCards } from '@/components/dashboard/section-cards';
+import { db } from '@/lib/db/drizzle';
 
 export default async function page() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user.id) {
     redirect('/sign-in');
+  }
+
+  const hasAccess = await db.query.user.findFirst({
+    where: (user, { eq }) => eq(user.id, session.user.id),
+    columns: {
+      revokeAccess: true,
+    },
+  });
+
+  if (hasAccess?.revokeAccess === true) {
+    return redirect('/noaccess');
   }
 
   const data = getDashboardInfo(session.user.id);

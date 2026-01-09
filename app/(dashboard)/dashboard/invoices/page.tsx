@@ -3,6 +3,7 @@ export const runtime = 'nodejs';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
+import { db } from '@/lib/db/drizzle';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,17 @@ export default async function page({ searchParams }: Props) {
   }
 
   const { tab } = await searchParams;
+
+  const hasAccess = await db.query.user.findFirst({
+    where: (user, { eq }) => eq(user.id, session.user.id),
+    columns: {
+      revokeAccess: true,
+    },
+  });
+
+  if (hasAccess?.revokeAccess === true) {
+    return redirect('/noaccess');
+  }
 
   const data = getInvoices(session.user.id, tab);
 

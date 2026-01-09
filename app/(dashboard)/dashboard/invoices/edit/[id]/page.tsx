@@ -2,6 +2,7 @@ export const runtime = 'nodejs';
 
 import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
+import { db } from '@/lib/db/drizzle';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getInvoice } from '@/lib/db/functions';
@@ -23,6 +24,17 @@ export default async function page({ params }: Props) {
   }
 
   const { id } = await params;
+
+  const hasAccess = await db.query.user.findFirst({
+    where: (user, { eq }) => eq(user.id, session.user.id),
+    columns: {
+      revokeAccess: true,
+    },
+  });
+
+  if (hasAccess?.revokeAccess === true) {
+    return redirect('/noaccess');
+  }
 
   const data = getInvoice(id, session.user.id);
 
