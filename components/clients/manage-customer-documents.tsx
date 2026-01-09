@@ -46,10 +46,12 @@ export default function ManageCustomerDocuments({ data }: Props) {
                 />
               ))}
             </div>
-            <Pagination
-              href={pathname}
-              numberOfPages={result.invoiceNumPages}
-            />
+            {result.invoices.length > 0 && (
+              <Pagination
+                href={pathname}
+                numberOfPages={result.invoiceNumPages}
+              />
+            )}
           </div>
         ) : (
           ''
@@ -65,10 +67,12 @@ export default function ManageCustomerDocuments({ data }: Props) {
                 />
               ))}
             </div>
-            <Pagination
-              href={pathname}
-              numberOfPages={result.quotationNumPages}
-            />
+            {result.quotations.length > 0 && (
+              <Pagination
+                href={pathname}
+                numberOfPages={result.quotationNumPages}
+              />
+            )}
           </div>
         ) : (
           ''
