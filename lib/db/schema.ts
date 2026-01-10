@@ -27,7 +27,7 @@ export const user = pgTable('user', {
   avatarUrl: text('avatar_url'),
   template: text('template').default('template1'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  revokeAccess: boolean('revoke_access').default(true).notNull(),
+  revokeAccess: boolean('revoke_access').default(false).notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
